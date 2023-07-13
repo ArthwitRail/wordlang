@@ -1,0 +1,18 @@
+{
+  parserClass="com.bluetree.wordlang.parser.WordParser"
+
+  extends="com.intellij.extapi.psi.ASTWrapperPsiElement"
+
+  psiClassPrefix="Word"
+  psiImplClassSuffix="Impl"
+  psiPackage="com.bluetree.wordlang.psi"
+  psiImplPackage="com.bluetree.wordlang.psi.impl"
+
+  elementTypeHolderClass="com.bluetree.wordlang.psi.WordTypes"
+  elementTypeClass="com.bluetree.wordlang.lang.WordElementType"
+  tokenTypeClass="com.bluetree.wordlang.lang.WordTokenType"
+}
+
+wordFile ::= element*
+
+element ::= WORD
