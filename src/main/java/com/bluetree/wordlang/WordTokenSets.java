@@ -7,6 +7,6 @@ public interface WordTokenSets {
 
     TokenSet IDENTIFIERS = TokenSet.create(WordTypes.WORD);
 
-    TokenSet COMMENTS = TokenSet.create();
+    TokenSet COMMENTS = TokenSet.create( WordTypes.COMMENT, WordTypes.COMMENT_CONTENT, WordTypes.END_COMMENT );
 
 }

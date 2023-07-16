@@ -19,11 +19,60 @@ import com.intellij.psi.TokenType;
 CRLF=\R
 WHITE_SPACE=[\ \n\t\f]
 WORD_CHARACTER=[A-Za-z]
+START_COMMENT="/*"
+END_COMMENT="*/"
+EOL_COMMENT="//".*
+
+%state IN_COMMENT
+
+%{
+
+    private int commentLevel = 0;
+
+    private void startComment() {
+        commentLevel = 1;
+        yybegin(IN_COMMENT);
+    }
+
+%}
 
 %%
 
-{WORD_CHARACTER}+           { return WordTypes.WORD; }
+<YYINITIAL> {
+    {WORD_CHARACTER}+           { return WordTypes.WORD; }
 
-({CRLF}|{WHITE_SPACE})+                                     { yybegin(YYINITIAL); return TokenType.WHITE_SPACE; }
+    {EOL_COMMENT}               { return WordTypes.EOL_COMMENT; }
+    {START_COMMENT}             { startComment(); return WordTypes.START_COMMENT; }
 
-[^]                                                         { return TokenType.BAD_CHARACTER; }
+    ({CRLF}|{WHITE_SPACE})+     {
+                                  System.out.println("Swapping back to initial");
+                                  yybegin(YYINITIAL);
+                                  return TokenType.WHITE_SPACE;
+                                }
+
+    [^]                         { return TokenType.BAD_CHARACTER; }
+}
+
+<IN_COMMENT> {
+
+    {START_COMMENT}
+      {
+        commentLevel++;
+        System.out.println("Increment comment Level "+commentLevel);
+        return WordTypes.COMMENT_CONTENT;
+      }
+    {END_COMMENT}
+      {
+        commentLevel--;
+        System.out.println("Decrementing comment Level to "+commentLevel);
+        if (commentLevel == 0) {
+            System.out.println("Swapping back to initial end of nested comment");
+            yybegin(YYINITIAL);
+            return WordTypes.END_COMMENT;
+        }
+        return WordTypes.COMMENT_CONTENT;
+      }
+    [^*/]+       { return WordTypes.COMMENT_CONTENT; }
+    [^]         { return WordTypes.COMMENT_CONTENT; }
+}
+

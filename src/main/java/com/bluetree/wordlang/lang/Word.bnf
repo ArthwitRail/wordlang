@@ -13,6 +13,10 @@
   tokenTypeClass="com.bluetree.wordlang.lang.WordTokenType"
 }
 
-wordFile ::= element*
+wordFile ::= element* blank*
 
-element ::= WORD
+element ::= WORD | blank
+
+private blank ::= comment | WHITE_SPACE
+
+comment ::= START_COMMENT COMMENT_CONTENT* END_COMMENT
