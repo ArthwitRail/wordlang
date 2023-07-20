@@ -3,6 +3,7 @@ package com.bluetree.wordlang.parser;
 
 import com.intellij.lexer.FlexLexer;
 import com.intellij.psi.tree.IElementType;
+import com.bluetree.wordlang.AdditionalWordTypes;
 import com.bluetree.wordlang.psi.WordTypes;
 import com.intellij.psi.TokenType;
 
@@ -41,8 +42,7 @@ EOL_COMMENT="//".*
 <YYINITIAL> {
     {WORD_CHARACTER}+           { return WordTypes.WORD; }
 
-    {EOL_COMMENT}               { return WordTypes.EOL_COMMENT; }
-    {START_COMMENT}             { startComment(); return WordTypes.START_COMMENT; }
+    {START_COMMENT}             { startComment(); return AdditionalWordTypes.START_COMMENT; }
 
     ({CRLF}|{WHITE_SPACE})+     {
                                   System.out.println("Swapping back to initial");
@@ -59,7 +59,7 @@ EOL_COMMENT="//".*
       {
         commentLevel++;
         System.out.println("Increment comment Level "+commentLevel);
-        return WordTypes.COMMENT_CONTENT;
+        return AdditionalWordTypes.COMMENT_CONTENT;
       }
     {END_COMMENT}
       {
@@ -68,11 +68,11 @@ EOL_COMMENT="//".*
         if (commentLevel == 0) {
             System.out.println("Swapping back to initial end of nested comment");
             yybegin(YYINITIAL);
-            return WordTypes.END_COMMENT;
+            return AdditionalWordTypes.END_COMMENT;
         }
-        return WordTypes.COMMENT_CONTENT;
+        return AdditionalWordTypes.COMMENT_CONTENT;
       }
-    [^*/]+       { return WordTypes.COMMENT_CONTENT; }
-    [^]         { return WordTypes.COMMENT_CONTENT; }
+    [^*/]+       { return AdditionalWordTypes.COMMENT_CONTENT; }
+    [^]         { return AdditionalWordTypes.COMMENT_CONTENT; }
 }
 
